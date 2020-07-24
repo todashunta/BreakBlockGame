@@ -43,6 +43,7 @@ if (canvas.getContext('2d')) {
             } else {
                 paddleWidth--;
             }
+
         } else {
             paddleWidth = 75;
         }
