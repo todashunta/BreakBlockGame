@@ -29,10 +29,13 @@ if (canvas.getContext('2d')) {
 
     function paddleShift() {
         const shift = document.getElementById('paddleShift');
-        if (shift.onchange) {
-            if (paddleWidth <= 30) {
+        const widthMin = 30;
+        const widthMax = 80;
+
+        if (shift.checked === true) {
+            if (paddleWidth <= widthMin) {
                 paddleWidthCount = 1;
-            } else if (paddleWidth >= 80) {
+            } else if (paddleWidth >= widthMax) {
                 paddleWidthCount = 0
             }
             if (paddleWidthCount === 1) {
@@ -41,6 +44,8 @@ if (canvas.getContext('2d')) {
                 paddleWidth--;
             }
 
+        } else {
+            paddleWidth = 75;
         }
     }
 
