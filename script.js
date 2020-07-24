@@ -31,6 +31,7 @@ if (canvas.getContext('2d')) {
         const shift = document.getElementById('paddleShift');
         const widthMin = 30;
         const widthMax = 80;
+
         if (shift.checked === true) {
             if (paddleWidth <= widthMin) {
                 paddleWidthCount = 1;
