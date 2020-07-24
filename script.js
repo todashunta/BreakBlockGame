@@ -28,20 +28,20 @@ if (canvas.getContext('2d')) {
     let lives = 3;
 
     function paddleShift() {
-        const paddleShift = getElementById('paddleShift');
-        if (paddleShift.checked)
-
+        const shift = document.getElementById('paddleShift');
+        if (shift.onchange) {
             if (paddleWidth <= 30) {
-            paddleWidthCount = 1;
-        } else if (paddleWidth >= 80) {
-            paddleWidthCount = 0
-        }
-        if (paddleWidthCount === 1) {
-            paddleWidth++;
-        } else {
-            paddleWidth--;
-        }
+                paddleWidthCount = 1;
+            } else if (paddleWidth >= 80) {
+                paddleWidthCount = 0
+            }
+            if (paddleWidthCount === 1) {
+                paddleWidth++;
+            } else {
+                paddleWidth--;
+            }
 
+        }
     }
 
     function addMode() {
