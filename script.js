@@ -2,6 +2,8 @@ const canvas = document.getElementById('myCanvas');
 if (canvas.getContext('2d')) {
     const ctx = canvas.getContext('2d');
 
+    let startSwich = 0;
+
     const ballRadius = 10;
     let x = canvas.width / 2;
     let y = canvas.height - 30;
@@ -9,7 +11,10 @@ if (canvas.getContext('2d')) {
     let dy = -2;
 
     const paddleHeight = 10;
-    let paddleWidth = 75;
+    let paddleWidth;
+    const paddleWidthMin = 30;
+    const paddleWidthMax = 80;
+
     let paddleWidthCount;
     let paddleX = (canvas.width - paddleWidth) / 2;
     let rightPressed = false;
@@ -29,13 +34,11 @@ if (canvas.getContext('2d')) {
 
     function paddleShift() {
         const shift = document.getElementById('paddleShift');
-        const widthMin = 30;
-        const widthMax = 80;
 
         if (shift.checked === true) {
-            if (paddleWidth <= widthMin) {
+            if (paddleWidth <= paddleWidthMin) {
                 paddleWidthCount = 1;
-            } else if (paddleWidth >= widthMax) {
+            } else if (paddleWidth >= paddleWidthMax) {
                 paddleWidthCount = 0
             }
             if (paddleWidthCount === 1) {
@@ -121,7 +124,7 @@ if (canvas.getContext('2d')) {
     function drawScore() {
         ctx.font = '16px Arial';
         ctx.fillStyle = '#09d';
-        ctx.fillText('Score: ' + score, 8, 20)
+        ctx.fillText('Score: ' + score, 8, 20);
     }
 
     function drawLives() {
@@ -172,47 +175,67 @@ if (canvas.getContext('2d')) {
     //画面表示
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        addMode();
-        drawBricks();
-        drawBall();
-        drawPaddle();
-        collisionDetection();
-        drawScore();
-        drawLives();
-
-        if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-            dx = -dx;
+        const start = document.getElementById('start');
+        const pause = document.getElementById('pause');
+        const reset = document.getElementById('reset');
+        start.onclick = () => {
+            startSwich = 1;
         }
-        if (y + dy < ballRadius) {
-            dy = -dy;
-        } else if (y + dy > canvas.height - ballRadius) {
-            if (x > paddleX && x < paddleX + paddleWidth) {
-                dy = -dy;
-            } else {
-                lives--;
-                if (!lives) {
-                    document.location.reload();
-                    alert('GAMW OVER');
+        pause.onclick = () => {
+            startSwich = 0;
+        }
+        reset.onclick = () => {
 
+        }
+
+        if (startSwich === 1) {
+
+            addMode();
+            drawBricks();
+            drawBall();
+            drawPaddle();
+            collisionDetection();
+            drawScore();
+            drawLives();
+
+            if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+                dx = -dx;
+            }
+            if (y + dy < ballRadius) {
+                dy = -dy;
+            } else if (y + dy > canvas.height - ballRadius) {
+                if (x > paddleX && x < paddleX + paddleWidth) {
+                    dy = -dy;
                 } else {
-                    x = canvas.width / 2;
-                    y = canvas.height - 30;
-                    dx = 2;
-                    dy = -2;
-                    paddleX = (canvas.widht - paddleWidth) / 2;
+                    lives--;
+                    if (!lives) {
+                        document.location.reload();
+                        alert('GAMW OVER');
+
+                    } else {
+                        x = canvas.width / 2;
+                        y = canvas.height - 30;
+                        dx = 2;
+                        dy = -2;
+                        paddleX = (canvas.widht - paddleWidth) / 2;
+                    }
                 }
             }
+
+
+            if (rightPressed && paddleX < canvas.width - paddleWidth) {
+                paddleX += 7;
+            } else if (leftPressed && paddleX > 0) {
+                paddleX -= 7;
+            }
+
+            x += dx;
+            y += dy;
+        } else {
+            ctx.font = '30px Arial';
+            ctx.fillStyle = '#09d';
+            ctx.fillText('PUSH START BUTTON', canvas.width / 2, canvas.height / 2);
         }
-
-
-        if (rightPressed && paddleX < canvas.width - paddleWidth) {
-            paddleX += 7;
-        } else if (leftPressed && paddleX > 0) {
-            paddleX -= 7;
-        }
-
-        x += dx;
-        y += dy;
     }
 
 
