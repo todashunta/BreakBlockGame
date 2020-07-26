@@ -4,7 +4,12 @@ if (canvas.getContext('2d')) {
 
     let startSwich = 0;
 
-    const ballRadius = 10;
+    const setBallRadius = 10;
+    let ballRadius;
+    const ballRadiusMin = 5;
+    const ballRadiusMax = 30;
+    let ballRadiusCount = 0;
+
     let x = canvas.width / 2;
     let y = canvas.height - 30;
     let dx = 2;
@@ -13,6 +18,7 @@ if (canvas.getContext('2d')) {
 
     const paddleHeight = 10;
     let paddleWidth;
+    const setPaddleWidth = 75;
     const paddleWidthMin = 30;
     const paddleWidthMax = 80;
 
@@ -52,17 +58,39 @@ if (canvas.getContext('2d')) {
             }
             if (paddleWidthCount === 1) {
                 paddleWidth++;
+                paddleX -= 0.5;
             } else {
                 paddleWidth--;
+                paddleX += 0.5;
             }
 
         } else {
-            paddleWidth = 75;
+            paddleWidth = setPaddleWidth;
+        }
+    }
+
+    function ballShift() {
+        const shift = document.getElementById('ballShift');
+
+        if (shift.checked === true) {
+            if (ballRadius <= ballRadiusMin) {
+                ballRadiusCount = 1;
+            } else if (ballRadius >= ballRadiusMax) {
+                ballRadiusCount = 0
+            }
+            if (ballRadiusCount === 1) {
+                ballRadius += 0.1;
+            } else {
+                ballRadius -= 0.1;
+            }
+        } else {
+            ballRadius = setBallRadius;
         }
     }
 
     function addMode() {
         paddleShift();
+        ballShift();
     }
 
     function bricksReset() {
@@ -125,7 +153,7 @@ if (canvas.getContext('2d')) {
             for (r = 0; r < brickRowCount; r++) {
                 let b = bricks[c][r];
                 if (b.status === 1) {
-                    if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                    if (x + ballRadius > b.x && x - ballRadius < b.x + brickWidth && y + ballRadius > b.y && y - ballRadius < b.y + brickHeight) {
                         dy = -dy;
                         b.status = 0;
                         score++;
@@ -249,9 +277,9 @@ if (canvas.getContext('2d')) {
 
 
             if (rightPressed && paddleX < canvas.width - paddleWidth) {
-                paddleX += 7;
+                paddleX += 5;
             } else if (leftPressed && paddleX > 0) {
-                paddleX -= 7;
+                paddleX -= 5;
             }
 
 
