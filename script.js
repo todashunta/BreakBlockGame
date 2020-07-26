@@ -36,6 +36,10 @@ if (canvas.getContext('2d')) {
 
     let lives = 3;
 
+    const pauseCharactor = 'PUSH START BUTTON';
+    const gameoverCharactor = 'GAME OVER';
+    const cleraCharactor = 'YOU　WIN';
+
     function paddleShift() {
         const shift = document.getElementById('paddleShift');
 
@@ -193,6 +197,7 @@ if (canvas.getContext('2d')) {
         const reset = document.getElementById('reset');
         start.onclick = () => {
             startSwich = 1;
+            console.log(gameoverCharactor.length);
         }
         pause.onclick = () => {
             startSwich = 0;
@@ -250,21 +255,23 @@ if (canvas.getContext('2d')) {
             if (lives === 0) {
                 ctx.font = '30px Arial';
                 ctx.fillStyle = '#09d';
-                ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2);
+                ctx.fillText(gameoverCharactor, (canvas.width - ctx.measureText(gameoverCharactor).width) / 2, canvas.height / 2 + 15);
                 bricksReset();
 
             } else {
 
                 ctx.font = '30px Arial';
                 ctx.fillStyle = '#09d';
-                ctx.fillText('PUSH START BUTTON', canvas.width / 2, canvas.height / 2);
+                ctx.fillText(pauseCharactor, (canvas.width - ctx.measureText(pauseCharactor).width) / 2, canvas.height / 2 + 15);
             }
         } else if (startSwich === 3) {
             ctx.font = '30px Arial';
             ctx.fillStyle = '#09d';
-            ctx.fillText('YOU WIN', canvas.width / 2, canvas.height / 2);
-            allReset();
-            startSwich = 0;
+            ctx.fillText(cleraCharactor, (canvas.width - ctx.measureText(cleraCharactor).width) / 2, canvas.height / 2 + 15);
+            start.onclick = () => {
+                startSwich = 1;
+                allReset();
+            }
         }
     }
 
