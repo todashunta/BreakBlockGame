@@ -9,6 +9,7 @@ if (canvas.getContext('2d')) {
     let y = canvas.height - 30;
     let dx = 2;
     let dy = -2;
+    let dis;
 
     const paddleHeight = 10;
     let paddleWidth;
@@ -20,13 +21,13 @@ if (canvas.getContext('2d')) {
     let rightPressed = false;
     let leftPressed = false;
 
-    const brickRowCount = 3;
-    const brickColumnCount = 5;
-    const brickWidth = 75;
+    const brickRowCount = 5;
+    const brickColumnCount = 7;
+    const brickWidth = 50;
     const brickHeight = 20;
     const brickPadding = 10;
-    const brickOffsetTop = 30;
-    const brickOffsetLeft = 30;
+    const brickOffsetTop = 20;
+    let brickOffsetLeft;
 
     let bricks = [];
     let c;
@@ -38,7 +39,7 @@ if (canvas.getContext('2d')) {
 
     const pauseCharactor = 'PUSH START BUTTON';
     const gameoverCharactor = 'GAME OVER';
-    const cleraCharactor = 'YOU　WIN';
+    const cleraCharactor = 'YOU WIN';
 
     function paddleShift() {
         const shift = document.getElementById('paddleShift');
@@ -134,6 +135,34 @@ if (canvas.getContext('2d')) {
         }
     }
 
+    function paddleDetection() {
+        if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+            dx = -dx;
+        }
+        if (y + dy < ballRadius) {
+            dy = -dy;
+        } else if (y + dy > canvas.height - ballRadius) {
+            if (x > paddleX && x < paddleX + paddleWidth) {
+                dy = -dy;
+                dis = x - (paddleX + paddleWidth / 2);
+                dx = dis / 6;
+            } else {
+                lives--;
+                if (!lives) {
+                    startSwich = 0;
+
+                } else {
+                    x = canvas.width / 2;
+                    y = canvas.height - 30;
+                    dx = 2;
+                    dy = -2;
+                }
+            }
+        }
+        x += dx;
+        y += dy;
+    }
+
     //スコア
     function drawScore() {
         ctx.font = '16px Arial';
@@ -166,6 +195,8 @@ if (canvas.getContext('2d')) {
     }
 
     function drawBricks() {
+        brickOffsetLeft = (canvas.width - ((brickWidth + brickPadding) * brickColumnCount)) / 2;
+
         for (c = 0; c < brickColumnCount; c++) {
             for (r = 0; r < brickRowCount; r++) {
                 if (bricks[c][r].status === 1) {
@@ -197,7 +228,6 @@ if (canvas.getContext('2d')) {
         const reset = document.getElementById('reset');
         start.onclick = () => {
             startSwich = 1;
-            console.log(gameoverCharactor.length);
         }
         pause.onclick = () => {
             startSwich = 0;
@@ -215,28 +245,7 @@ if (canvas.getContext('2d')) {
             collisionDetection();
             drawScore();
             drawLives();
-
-            if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-                dx = -dx;
-            }
-            if (y + dy < ballRadius) {
-                dy = -dy;
-            } else if (y + dy > canvas.height - ballRadius) {
-                if (x > paddleX && x < paddleX + paddleWidth) {
-                    dy = -dy;
-                } else {
-                    lives--;
-                    if (!lives) {
-                        startSwich = 0;
-
-                    } else {
-                        x = canvas.width / 2;
-                        y = canvas.height - 30;
-                        dx = 2;
-                        dy = -2;
-                    }
-                }
-            }
+            paddleDetection();
 
 
             if (rightPressed && paddleX < canvas.width - paddleWidth) {
@@ -245,8 +254,6 @@ if (canvas.getContext('2d')) {
                 paddleX -= 7;
             }
 
-            x += dx;
-            y += dy;
 
             if (score === brickRowCount * brickColumnCount) {
                 startSwich = 3;
