@@ -16,7 +16,7 @@ if (canvas.getContext('2d')) {
     const paddleWidthMax = 80;
 
     let paddleWidthCount;
-    let paddleX = (canvas.width - paddleWidth) / 2;
+    let paddleX;
     let rightPressed = false;
     let leftPressed = false;
 
@@ -27,6 +27,10 @@ if (canvas.getContext('2d')) {
     const brickPadding = 10;
     const brickOffsetTop = 30;
     const brickOffsetLeft = 30;
+
+    let bricks = [];
+    let c;
+    let r;
 
     let score = 0;
 
@@ -56,18 +60,28 @@ if (canvas.getContext('2d')) {
         paddleShift();
     }
 
-
-    let bricks = [];
-
-    for (let c = 0; c < brickColumnCount; c++) {
-        bricks[c] = [];
-        for (let r = 0; r < brickRowCount; r++) {
-            bricks[c][r] = {
-                x: 0,
-                y: 0,
-                status: 1
-            };
+    function bricksReset() {
+        for (c = 0; c < brickColumnCount; c++) {
+            bricks[c] = [];
+            for (r = 0; r < brickRowCount; r++) {
+                bricks[c][r] = {
+                    x: 0,
+                    y: 0,
+                    status: 1
+                };
+            }
         }
+    }
+
+    function allReset() {
+        x = canvas.width / 2;
+        y = canvas.height - 30;
+        dx = 2;
+        dy = -2;
+        paddleX = (canvas.widht - paddleWidth) / 2;
+        lives = 3;
+        score = 0;
+        bricksReset();
     }
 
     document.addEventListener('keydown', keyDownHandler, false);
@@ -102,18 +116,14 @@ if (canvas.getContext('2d')) {
 
     //あたり判定
     function collisionDetection() {
-        for (let c = 0; c < brickColumnCount; c++) {
-            for (let r = 0; r < brickRowCount; r++) {
+        for (c = 0; c < brickColumnCount; c++) {
+            for (r = 0; r < brickRowCount; r++) {
                 let b = bricks[c][r];
                 if (b.status === 1) {
                     if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                         dy = -dy;
                         b.status = 0;
                         score++;
-                        if (score === brickRowCount * brickColumnCount) {
-                            alert('YOU WIN, CONGRATUKATIONS!');
-                            document.location.reload();
-                        }
                     }
                 }
             }
@@ -152,8 +162,8 @@ if (canvas.getContext('2d')) {
     }
 
     function drawBricks() {
-        for (let c = 0; c < brickColumnCount; c++) {
-            for (let r = 0; r < brickRowCount; r++) {
+        for (c = 0; c < brickColumnCount; c++) {
+            for (r = 0; r < brickRowCount; r++) {
                 if (bricks[c][r].status === 1) {
 
                     let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
@@ -173,6 +183,9 @@ if (canvas.getContext('2d')) {
 
 
     //画面表示
+    bricksReset();
+
+
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const start = document.getElementById('start');
@@ -185,7 +198,7 @@ if (canvas.getContext('2d')) {
             startSwich = 0;
         }
         reset.onclick = () => {
-
+            allReset();
         }
 
         if (startSwich === 1) {
@@ -209,15 +222,13 @@ if (canvas.getContext('2d')) {
                 } else {
                     lives--;
                     if (!lives) {
-                        document.location.reload();
-                        alert('GAMW OVER');
+                        startSwich = 0;
 
                     } else {
                         x = canvas.width / 2;
                         y = canvas.height - 30;
                         dx = 2;
                         dy = -2;
-                        paddleX = (canvas.widht - paddleWidth) / 2;
                     }
                 }
             }
@@ -231,10 +242,29 @@ if (canvas.getContext('2d')) {
 
             x += dx;
             y += dy;
-        } else {
+
+            if (score === brickRowCount * brickColumnCount) {
+                startSwich = 3;
+            }
+        } else if (startSwich === 0) {
+            if (lives === 0) {
+                ctx.font = '30px Arial';
+                ctx.fillStyle = '#09d';
+                ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2);
+                bricksReset();
+
+            } else {
+
+                ctx.font = '30px Arial';
+                ctx.fillStyle = '#09d';
+                ctx.fillText('PUSH START BUTTON', canvas.width / 2, canvas.height / 2);
+            }
+        } else if (startSwich === 3) {
             ctx.font = '30px Arial';
             ctx.fillStyle = '#09d';
-            ctx.fillText('PUSH START BUTTON', canvas.width / 2, canvas.height / 2);
+            ctx.fillText('YOU WIN', canvas.width / 2, canvas.height / 2);
+            allReset();
+            startSwich = 0;
         }
     }
 
