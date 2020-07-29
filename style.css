@@ -1,3 +1,16 @@
 canvas {
     background-color: #eee;
 }
+
+.number {
+    width: 50px;
+}
+
+body>div {
+    width: 500px;
+    margin: auto;
+}
+
+#speedRange {
+    width: 50%;
+}

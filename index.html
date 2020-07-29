@@ -4,24 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ブロック崩し</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div>
-        <canvas id="myCanvas" width="480px" height="320px"></canvas>
+        <h1>ブロック崩し</h1>
+        <div>
+            <canvas id="myCanvas" width="480px" height="320px"></canvas>
+        </div>
+        <form>
+            <button type="button" id="start">START(S)</button>
+            <button type="button" id="pause">PAUSE(P)</button>
+            <button type="button" id="reset">RESET(R)</button>
+            <h4>ブロック数の選択</h4>
+            <p>
+                <input type="number" id="row" class="number" value="3" min="1" max="6"> 行 ：
+                <input type="number" id="column" class="number" value="5" min="1" max="8"> 列
+                <button type="button" id="bricksOption">決定</button>
+            </p>
+            <h4>ボール速度</h4>
+            <p>
+                <input type="range" id="speedRange" min="0.1" max="5" step="0.1" value="1">
+                <span id="rangeChar"></span>倍
+            </p>
+            <h4>モード選択</h4>
+            <ul>
+                <li><label><input type="checkbox" id="paddleShift">パドルの長さが徐々に変わります。</label></li>
+                <li><label><input type="checkbox" id="ballShift">ボールの大きさが徐々に変わります。</label></li>
+            </ul>
+        </form>
+        <script src="script.js"></script>
     </div>
-    <form>
-        <button type="button" id="start">START</button>
-        <button type="button" id="pause">PAUSE</button>
-        <button type="button" id="reset">RESET</button>
-        <ul>
-            <li><label><input type="checkbox" id="paddleShift">パドルの長さが常に変わります。</label></li>
-            <li><label><input type="checkbox" id="ballShift">ボールの大きさが常に変わります。</label></li>
-        </ul>
-    </form>
-    <script src="script.js"></script>
 </body>
 
 </html>

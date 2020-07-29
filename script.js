@@ -8,7 +8,7 @@ if (canvas.getContext('2d')) {
     let ballRadius;
     const ballRadiusMin = 5;
     const ballRadiusMax = 30;
-    let ballRadiusCount = 0;
+    let ballRadiusCount;
 
     let x = canvas.width / 2;
     let y = canvas.height - 30;
@@ -24,11 +24,15 @@ if (canvas.getContext('2d')) {
 
     let paddleWidthCount;
     let paddleX;
+
     let rightPressed = false;
     let leftPressed = false;
+    let sPressed = false;
+    let pPressed = false;
+    let rPressed = false;
 
-    const brickRowCount = 5;
-    const brickColumnCount = 7;
+    let brickRowCount;
+    let brickColumnCount = 5;
     const brickWidth = 50;
     const brickHeight = 20;
     const brickPadding = 10;
@@ -43,20 +47,34 @@ if (canvas.getContext('2d')) {
 
     let lives = 3;
 
-    const pauseCharactor = 'PUSH START BUTTON';
-    const gameoverCharactor = 'GAME OVER';
-    const cleraCharactor = 'YOU WIN';
+    const pauseChar = 'PUSH START BUTTON';
+    const gameoverChar = 'GAME OVER';
+    const clearChar = 'YOU WIN';
+
+    const start = document.getElementById('start');
+    const pause = document.getElementById('pause');
+    const reset = document.getElementById('reset');
+
+    const bricksArray = document.getElementById('bricksOption');
+    const brickRow = document.getElementById('row');
+    const brickColumn = document.getElementById('column');
+
+    const speedRange = document.getElementById('speedRange');
+    const speedButton = document.getElementById('speedButton');
+
+    brickRowCount = brickRow.value;
+    brickColumnCount = brickColumn.value;
 
     function paddleShift() {
         const shift = document.getElementById('paddleShift');
 
         if (shift.checked === true) {
             if (paddleWidth <= paddleWidthMin) {
-                paddleWidthCount = 1;
+                paddleWidthCount = true;
             } else if (paddleWidth >= paddleWidthMax) {
-                paddleWidthCount = 0
+                paddleWidthCount = false
             }
-            if (paddleWidthCount === 1) {
+            if (paddleWidthCount === true) {
                 paddleWidth++;
                 paddleX -= 0.5;
             } else {
@@ -74,11 +92,11 @@ if (canvas.getContext('2d')) {
 
         if (shift.checked === true) {
             if (ballRadius <= ballRadiusMin) {
-                ballRadiusCount = 1;
+                ballRadiusCount = true;
             } else if (ballRadius >= ballRadiusMax) {
-                ballRadiusCount = 0
+                ballRadiusCount = false;
             }
-            if (ballRadiusCount === 1) {
+            if (ballRadiusCount === true) {
                 ballRadius += 0.1;
             } else {
                 ballRadius -= 0.1;
@@ -93,6 +111,12 @@ if (canvas.getContext('2d')) {
         ballShift();
     }
 
+    function sleep(waitMsec) {
+        let startMsec = new Date();
+
+        while (new Date() - startMsec < waitMsec);
+    }
+    //リセット
     function bricksReset() {
         for (c = 0; c < brickColumnCount; c++) {
             bricks[c] = [];
@@ -115,17 +139,30 @@ if (canvas.getContext('2d')) {
         lives = 3;
         score = 0;
         bricksReset();
+        start.disabled = false;
+        pause.disabled = false;
+        reset.disabled = false;
     }
+
+    //入力キー設定
 
     document.addEventListener('keydown', keyDownHandler, false);
     document.addEventListener('keyup', keyUpHandler, false);
 
-    //入力キー設定
     function keyDownHandler(e) {
         if (e.key === 'Right' || e.key === 'ArrowRight') {
             rightPressed = true;
         } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
             leftPressed = true;
+        } else if (e.key === 'p') {
+            pPressed = true;
+            buttonPressed();
+        } else if (e.key === 's') {
+            sPressed = true;
+            buttonPressed();
+        } else if (e.key === 'r') {
+            rPressed = true;
+            buttonPressed();
         }
     }
 
@@ -134,6 +171,22 @@ if (canvas.getContext('2d')) {
             rightPressed = false;
         } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
             leftPressed = false;
+        } else if (e.key === 'p') {
+            pPressed = false;
+        } else if (e.key === 's') {
+            sPressed = false;
+        } else if (e.key === 'r') {
+            rPressed = false;
+        }
+    }
+
+    function buttonPressed() {
+        if (sPressed === true) {
+            startSwich = 1;
+        } else if (pPressed === true) {
+            startSwich = 0;
+        } else if (rPressed === true) {
+            allReset();
         }
     }
 
@@ -187,8 +240,8 @@ if (canvas.getContext('2d')) {
                 }
             }
         }
-        x += dx;
-        y += dy;
+        x += dx * speedRange.value;
+        y += dy * speedRange.value;
     }
 
     //スコア
@@ -244,6 +297,12 @@ if (canvas.getContext('2d')) {
         }
     }
 
+    function canvasChar(char) {
+        ctx.font = '30px Arial';
+        ctx.fillStyle = '#09d';
+        ctx.fillText(char, (canvas.width - ctx.measureText(char).width) / 2, canvas.height / 2 + 15);
+    }
+
 
     //画面表示
     bricksReset();
@@ -251,9 +310,6 @@ if (canvas.getContext('2d')) {
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const start = document.getElementById('start');
-        const pause = document.getElementById('pause');
-        const reset = document.getElementById('reset');
         start.onclick = () => {
             startSwich = 1;
         }
@@ -263,6 +319,13 @@ if (canvas.getContext('2d')) {
         reset.onclick = () => {
             allReset();
         }
+        bricksArray.onclick = () => {
+            brickRowCount = brickRow.value;
+            brickColumnCount = brickColumn.value;
+            allReset();
+        }
+
+        document.getElementById('rangeChar').innerText = speedRange.value;
 
         if (startSwich === 1) {
 
@@ -274,35 +337,29 @@ if (canvas.getContext('2d')) {
             drawScore();
             drawLives();
             paddleDetection();
-
+            buttonPressed();
 
             if (rightPressed && paddleX < canvas.width - paddleWidth) {
-                paddleX += 5;
+                paddleX += 7;
             } else if (leftPressed && paddleX > 0) {
-                paddleX -= 5;
+                paddleX -= 7;
             }
-
 
             if (score === brickRowCount * brickColumnCount) {
                 startSwich = 3;
             }
         } else if (startSwich === 0) {
             if (lives === 0) {
-                ctx.font = '30px Arial';
-                ctx.fillStyle = '#09d';
-                ctx.fillText(gameoverCharactor, (canvas.width - ctx.measureText(gameoverCharactor).width) / 2, canvas.height / 2 + 15);
-                bricksReset();
-
+                canvasChar(gameoverChar);
+                start.disabled = true;
+                setTimeout(() => {
+                    allReset();
+                }, 1000);
             } else {
-
-                ctx.font = '30px Arial';
-                ctx.fillStyle = '#09d';
-                ctx.fillText(pauseCharactor, (canvas.width - ctx.measureText(pauseCharactor).width) / 2, canvas.height / 2 + 15);
+                canvasChar(pauseChar);
             }
         } else if (startSwich === 3) {
-            ctx.font = '30px Arial';
-            ctx.fillStyle = '#09d';
-            ctx.fillText(cleraCharactor, (canvas.width - ctx.measureText(cleraCharactor).width) / 2, canvas.height / 2 + 15);
+            canvasChar(clearChar);
             start.onclick = () => {
                 startSwich = 1;
                 allReset();
