@@ -31,15 +31,15 @@ if (canvas.getContext('2d')) {
     let pPressed = false;
     let rPressed = false;
 
-    let brickRowCount;
-    let brickColumnCount = 5;
-    const brickWidth = 50;
-    const brickHeight = 20;
-    const brickPadding = 10;
-    const brickOffsetTop = 20;
-    let brickOffsetLeft;
+    let blockRowCount;
+    let blockColumnCount = 5;
+    const blockWidth = 50;
+    const blockHeight = 20;
+    const blockPadding = 10;
+    const blockOffsetTop = 20;
+    let blockOffsetLeft;
 
-    let bricks = [];
+    let blocks = [];
     let c;
     let r;
 
@@ -55,16 +55,22 @@ if (canvas.getContext('2d')) {
     const pause = document.getElementById('pause');
     const reset = document.getElementById('reset');
 
-    const bricksArray = document.getElementById('bricksOption');
-    const brickRow = document.getElementById('row');
-    const brickColumn = document.getElementById('column');
+    const blocksArray = document.getElementById('blocksOption');
+    const blockRow = document.getElementById('row');
+    const blockColumn = document.getElementById('column');
 
     const speedRange = document.getElementById('speedRange');
-    const speedButton = document.getElementById('speedButton');
 
-    brickRowCount = brickRow.value;
-    brickColumnCount = brickColumn.value;
+    blockRowCount = blockRow.value;
+    blockColumnCount = blockColumn.value;
 
+    //メニュー・CSS設定
+    function menu() {
+        const menu = document.getElementById('menu').style;
+        menu.display = 'none';
+    }
+
+    //パドルの長さ
     function paddleShift() {
         const shift = document.getElementById('paddleShift');
 
@@ -86,7 +92,7 @@ if (canvas.getContext('2d')) {
             paddleWidth = setPaddleWidth;
         }
     }
-
+    //ボールの大きさ
     function ballShift() {
         const shift = document.getElementById('ballShift');
 
@@ -111,17 +117,12 @@ if (canvas.getContext('2d')) {
         ballShift();
     }
 
-    function sleep(waitMsec) {
-        let startMsec = new Date();
-
-        while (new Date() - startMsec < waitMsec);
-    }
-    //リセット
-    function bricksReset() {
-        for (c = 0; c < brickColumnCount; c++) {
-            bricks[c] = [];
-            for (r = 0; r < brickRowCount; r++) {
-                bricks[c][r] = {
+    //ブロックリセット
+    function blocksReset() {
+        for (c = 0; c < blockColumnCount; c++) {
+            blocks[c] = [];
+            for (r = 0; r < blockRowCount; r++) {
+                blocks[c][r] = {
                     x: 0,
                     y: 0,
                     status: 1
@@ -129,7 +130,7 @@ if (canvas.getContext('2d')) {
             }
         }
     }
-
+    //オールリセット
     function allReset() {
         x = canvas.width / 2;
         y = canvas.height - 30;
@@ -138,7 +139,7 @@ if (canvas.getContext('2d')) {
         paddleX = (canvas.widht - paddleWidth) / 2;
         lives = 3;
         score = 0;
-        bricksReset();
+        blocksReset();
         start.disabled = false;
         pause.disabled = false;
         reset.disabled = false;
@@ -179,7 +180,7 @@ if (canvas.getContext('2d')) {
             rPressed = false;
         }
     }
-
+    //ボタン設定
     function buttonPressed() {
         if (sPressed === true) {
             startSwich = 1;
@@ -200,13 +201,13 @@ if (canvas.getContext('2d')) {
         }
     }
 
-    //あたり判定
+    //ブロックあたり判定
     function collisionDetection() {
-        for (c = 0; c < brickColumnCount; c++) {
-            for (r = 0; r < brickRowCount; r++) {
-                let b = bricks[c][r];
+        for (c = 0; c < blockColumnCount; c++) {
+            for (r = 0; r < blockRowCount; r++) {
+                let b = blocks[c][r];
                 if (b.status === 1) {
-                    if (x + ballRadius > b.x && x - ballRadius < b.x + brickWidth && y + ballRadius > b.y && y - ballRadius < b.y + brickHeight) {
+                    if (x + ballRadius > b.x && x - ballRadius < b.x + blockWidth && y + ballRadius > b.y && y - ballRadius < b.y + blockHeight) {
                         dy = -dy;
                         b.status = 0;
                         score++;
@@ -215,7 +216,7 @@ if (canvas.getContext('2d')) {
             }
         }
     }
-
+    //パドルあたり判定
     function paddleDetection() {
         if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
             dx = -dx;
@@ -244,7 +245,7 @@ if (canvas.getContext('2d')) {
         y += dy * speedRange.value;
     }
 
-    //スコア
+    //スコア・ライフ
     function drawScore() {
         ctx.font = '16px Arial';
         ctx.fillStyle = '#09d';
@@ -275,20 +276,20 @@ if (canvas.getContext('2d')) {
         ctx.closePath;
     }
 
-    function drawBricks() {
-        brickOffsetLeft = (canvas.width - ((brickWidth + brickPadding) * brickColumnCount)) / 2;
+    function drawBlocks() {
+        blockOffsetLeft = (canvas.width - ((blockWidth + blockPadding) * blockColumnCount)) / 2;
 
-        for (c = 0; c < brickColumnCount; c++) {
-            for (r = 0; r < brickRowCount; r++) {
-                if (bricks[c][r].status === 1) {
+        for (c = 0; c < blockColumnCount; c++) {
+            for (r = 0; r < blockRowCount; r++) {
+                if (blocks[c][r].status === 1) {
 
-                    let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
-                    let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+                    let blockX = (c * (blockWidth + blockPadding)) + blockOffsetLeft;
+                    let blockY = (r * (blockHeight + blockPadding)) + blockOffsetTop;
 
-                    bricks[c][r].x = brickX;
-                    bricks[c][r].y = brickY;
+                    blocks[c][r].x = blockX;
+                    blocks[c][r].y = blockY;
                     ctx.beginPath();
-                    ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                    ctx.rect(blockX, blockY, blockWidth, blockHeight);
                     ctx.fillStyle = '#09D';
                     ctx.fill();
                     ctx.closePath();
@@ -296,7 +297,7 @@ if (canvas.getContext('2d')) {
             }
         }
     }
-
+    //キャンバスの文字列設定
     function canvasChar(char) {
         ctx.font = '30px Arial';
         ctx.fillStyle = '#09d';
@@ -304,10 +305,10 @@ if (canvas.getContext('2d')) {
     }
 
 
-    //画面表示
-    bricksReset();
+    //ブロック表示
+    blocksReset();
 
-
+    //メイン関数・ループ関数
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         start.onclick = () => {
@@ -319,9 +320,9 @@ if (canvas.getContext('2d')) {
         reset.onclick = () => {
             allReset();
         }
-        bricksArray.onclick = () => {
-            brickRowCount = brickRow.value;
-            brickColumnCount = brickColumn.value;
+        blocksArray.onclick = () => {
+            blockRowCount = blockRow.value;
+            blockColumnCount = blockColumn.value;
             allReset();
         }
 
@@ -330,7 +331,7 @@ if (canvas.getContext('2d')) {
         if (startSwich === 1) {
 
             addMode();
-            drawBricks();
+            drawBlocks();
             drawBall();
             drawPaddle();
             collisionDetection();
@@ -338,6 +339,7 @@ if (canvas.getContext('2d')) {
             drawLives();
             paddleDetection();
             buttonPressed();
+            menu();
 
             if (rightPressed && paddleX < canvas.width - paddleWidth) {
                 paddleX += 7;
@@ -345,7 +347,7 @@ if (canvas.getContext('2d')) {
                 paddleX -= 7;
             }
 
-            if (score === brickRowCount * brickColumnCount) {
+            if (score === blockRowCount * blockColumnCount) {
                 startSwich = 3;
             }
         } else if (startSwich === 0) {

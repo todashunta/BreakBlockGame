@@ -14,3 +14,18 @@ body>div {
 #speedRange {
     width: 50%;
 }
+
+h4::after {
+    content: " >";
+}
+
+h4 {
+    background-color: rgb(236, 240, 248);
+    border-bottom: solid 5px rgb(125, 154, 250);
+}
+
+
+/* 
+.menu {
+    display: none;
+} */
