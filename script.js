@@ -64,12 +64,6 @@ if (canvas.getContext('2d')) {
     blockRowCount = blockRow.value;
     blockColumnCount = blockColumn.value;
 
-    //メニュー・CSS設定
-    function menu() {
-        const menu = document.getElementById('menu').style;
-        menu.display = 'none';
-    }
-
     //パドルの長さ
     function paddleShift() {
         const shift = document.getElementById('paddleShift');
@@ -208,7 +202,27 @@ if (canvas.getContext('2d')) {
                 let b = blocks[c][r];
                 if (b.status === 1) {
                     if (x + ballRadius > b.x && x - ballRadius < b.x + blockWidth && y + ballRadius > b.y && y - ballRadius < b.y + blockHeight) {
-                        dy = -dy;
+                        if (x > b.x + blockWidth && y > b.y + blockHeight || x < b.x && y < b.y) {
+                            if (x - b.x + blockWidth < y - b.y + blockHeight) {
+                                dy = -dy;
+                                console.log('1');
+                            } else if (x - b.x + blockWidth > y - b.y + blockHeight) {
+                                dx = -dx;
+                                console.log('2');
+                            } else if (b.x - x < b.y - y) {
+                                dy = -dy;
+                                console.log('3');
+                            } else {
+                                dx = -dx;
+                                console.log('4');
+                            }
+                        } else if (x > b.x + blockWidth || x < b.x) {
+                            dx = -dx;
+                            console.log('5');
+                        } else if (y > b.y + blockHeight || y < b.y) {
+                            dy = -dy;
+                            console.log('6');
+                        }
                         b.status = 0;
                         score++;
                     }
@@ -223,7 +237,7 @@ if (canvas.getContext('2d')) {
         }
         if (y + dy < ballRadius) {
             dy = -dy;
-        } else if (y + dy > canvas.height - ballRadius) {
+        } else if (y + dy + ballRadius > canvas.height - paddleHeight + 3) { //+３はちょっとつぶれているのを表現するため
             if (x > paddleX && x < paddleX + paddleWidth) {
                 dy = -dy;
                 dis = x - (paddleX + paddleWidth / 2);
@@ -339,7 +353,6 @@ if (canvas.getContext('2d')) {
             drawLives();
             paddleDetection();
             buttonPressed();
-            menu();
 
             if (rightPressed && paddleX < canvas.width - paddleWidth) {
                 paddleX += 7;
