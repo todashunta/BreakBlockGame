@@ -18,7 +18,7 @@ if (canvas.getContext('2d')) {
 
     const paddleHeight = 10;
     let paddleWidth;
-    const setPaddleWidth = 75;
+    const defaultPaddleWidth = 75;
     const paddleWidthMin = 30;
     const paddleWidthMax = 80;
 
@@ -64,11 +64,35 @@ if (canvas.getContext('2d')) {
     blockRowCount = blockRow.value;
     blockColumnCount = blockColumn.value;
 
-    //パドルの長さ
-    function paddleShift() {
-        const shift = document.getElementById('paddleShift');
+    const menuDiv = {
+        blocks: document.getElementById('blocks'),
+        ballSpeed: document.getElementById('ballSpeed'),
+        mode: document.getElementById('mode')
+    }
+    const menu = {
+        blocksP: '#blocks p',
+        ballSpeedP: '#ballSpeed p',
+        modeUl: '#mode Ul'
+    }
 
-        if (shift.checked === true) {
+    // menuDiv.blocks.onclick = () => {
+    //     const p = document.querySelector(menu.blocksP);
+    //     p.classList.toggle('menuNone');
+    // }
+    // menuDiv.ballSpeed.onclick = () => {
+    //     const p = document.querySelector(menu.ballSpeedP);
+    //     p.classList.toggle('menuNone');
+    // }
+    // menuDiv.mode.onclick = () => {
+    //     const p = document.querySelector(menu.modeUl);
+    //     p.classList.toggle('menuNone');
+    // }
+
+    //パドルの長さ
+    function paddleAlter() {
+        const alter = document.getElementById('paddleAlter');
+
+        if (alter.checked === true) {
             if (paddleWidth <= paddleWidthMin) {
                 paddleWidthCount = true;
             } else if (paddleWidth >= paddleWidthMax) {
@@ -83,14 +107,14 @@ if (canvas.getContext('2d')) {
             }
 
         } else {
-            paddleWidth = setPaddleWidth;
+            paddleWidth = defaultPaddleWidth;
         }
     }
     //ボールの大きさ
-    function ballShift() {
-        const shift = document.getElementById('ballShift');
+    function ballAlter() {
+        const alter = document.getElementById('ballAlter');
 
-        if (shift.checked === true) {
+        if (alter.checked === true) {
             if (ballRadius <= ballRadiusMin) {
                 ballRadiusCount = true;
             } else if (ballRadius >= ballRadiusMax) {
@@ -107,8 +131,8 @@ if (canvas.getContext('2d')) {
     }
 
     function addMode() {
-        paddleShift();
-        ballShift();
+        paddleAlter();
+        ballAlter();
     }
 
     //ブロックリセット
